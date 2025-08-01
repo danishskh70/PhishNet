@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PhishNet Awareness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .quiz-section {
+            border: 2px solid #4fd1c5;
+            box-shadow: 0 0 15px rgba(79, 209, 197, 0.4);
+        }
+        .awareness-section {
+            opacity: 0.9;
+            border: 1px solid #4a5568;
+        }
+        .quiz-title {
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white px-6 py-12 font-sans">
+    <h1 class="text-4xl font-bold text-teal-400 mb-10 text-center">You've Been Simulated by PhishNet!</h1>
+
+    <!-- Flex container for side-by-side layout -->
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Quiz Section - Now more prominent (Left side) -->
+        <section class="quiz-section bg-gray-800 rounded-xl p-8 shadow-2xl lg:w-2/3 order-1">
+            <h2 class="quiz-title text-3xl font-bold text-green-400 mb-6 text-center">Test Your Phishing IQ</h2>
+            <form id="quizForm" class="space-y-8">
+
+                <!-- Question 1 -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">1. What should you check first in a suspicious email?</p>
+                    <div class="mt-3 space-y-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="q1" value="B" class="mr-2">A. The font style</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q1" value="A" class="mr-2">B. The sender's email address</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q1" value="C" class="mr-2">C. The color scheme</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q1" value="D" class="mr-2">D. The time it was sent</label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">2. What does HTTPS indicate?</p>
+                    <div class="mt-3 space-y-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="q2" value="A" class="mr-2">A. Hackers Took Passwords System</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q2" value="B" class="mr-2">B. Secure connection</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q2" value="C" class="mr-2">C. A gaming server</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q2" value="D" class="mr-2">D. Hidden tracking</label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">3. If a link says <code class="bg-gray-600 px-2 py-1 rounded">https://google.com-security-check.tk</code>, is it safe?</p>
+                    <div class="mt-3 space-y-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="q3" value="A" class="mr-2">A. Yes, it has google.com</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q3" value="B" class="mr-2">B. Only if it says HTTPS</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q3" value="C" class="mr-2">C. No, it's a suspicious domain</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q3" value="D" class="mr-2">D. Depends on your mood</label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">4. What's a good practice after receiving a phishing email?</p>
+                    <div class="mt-3 space-y-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="q4" value="A" class="mr-2">A. Reply and ask who they are</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q4" value="B" class="mr-2">B. Report it</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q4" value="C" class="mr-2">C. Delete it and forget</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q4" value="D" class="mr-2">D. Share it with friends</label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <p class="font-semibold text-lg">5. Which of these is a phishing red flag?</p>
+                    <div class="mt-3 space-y-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="q5" value="A" class="mr-2">A. Grammar errors</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q5" value="B" class="mr-2">B. Urgency</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q5" value="C" class="mr-2">C. Fake domain</label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="q5" value="D" class="mr-2">D. All of the above</label>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="button" onclick="calculateScore()" class="mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+
+            <div id="result" class="mt-8 text-xl font-semibold text-center hidden p-4 rounded-lg"></div>
+        </section>
+        
+        <!-- Awareness Info Section - Now less prominent (Right side) -->
+        <section class="awareness-section bg-gray-800 rounded-xl p-6 lg:w-1/3 order-2">
+            <p class="mb-4 text-gray-300">This was a simulated phishing attack conducted for awareness purposes only. Your credentials were not stored for malicious use.</p>
+
+            <h2 class="text-xl font-semibold text-yellow-300 mt-6">How You Got Phished:</h2>
+            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-300">
+                <li>You received an email that looked legitimate.</li>
+                <li>You clicked the link and landed on a fake login page.</li>
+                <li>You entered your credentials and submitted them.</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold text-yellow-300 mt-6">How to Spot Phishing Next Time:</h2>
+            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-300">
+                <li>Always check the sender's email carefully.</li>
+                <li>Hover over links to preview the real URL.</li>
+                <li>Don't enter credentials unless you're sure the site is real.</li>
+                <li>Look for HTTPS and domain spelling.</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold text-yellow-300 mt-6">Stay Safe Online:</h2>
+            <ul class="list-disc list-inside mt-2 space-y-1 text-gray-300">
+                <li>Use multi-factor authentication (MFA).</li>
+                <li>Report suspicious emails to your IT/security team.</li>
+                <li>Use password managers to avoid reusing passwords.</li>
+            </ul>
+
+            <p class="mt-6 text-center">
+                <strong class="text-gray-300">Report real phishing attempts here:</strong><br>
+                <a href="https://safety.google/phishing-scams/" class="text-orange-400 underline hover:text-orange-300" target="_blank">Report to Google</a>
+            </p>
+        </section>
+    </div>
+
+    <script>
+        function calculateScore() {
+            const answers = {
+                q1: "A",
+                q2: "B",
+                q3: "C",
+                q4: "B",
+                q5: "D"
+            };
+
+            let score = 0;
+            for (let key in answers) {
+                const selected = document.querySelector(`input[name="${key}"]:checked`);
+                if (selected && selected.value === answers[key]) {
+                    score++;
+                }
+            }
+
+            const result = document.getElementById("result");
+            result.classList.remove("hidden");
+            result.classList.remove("text-green-400", "text-yellow-300", "text-red-400", "bg-green-900", "bg-yellow-900", "bg-red-900");
+
+            if (score === 5) {
+                result.textContent = `🎉 Perfect! You scored ${score}/5. You're phishing-proof!`;
+                result.classList.add("text-green-400", "bg-green-900");
+            } else if (score >= 3) {
+                result.textContent = `👍 Good! You scored ${score}/5. But stay alert.`;
+                result.classList.add("text-yellow-300", "bg-yellow-900");
+            } else {
+                result.textContent = `⚠️ You scored ${score}/5. More awareness is needed!`;
+                result.classList.add("text-red-400", "bg-red-900");
+            }
+            
+            // Scroll to result
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
