@@ -21,19 +21,22 @@ PhishNet is a phishing awareness and credential logging simulation project desig
 ## 📁 Folder Structure
 
 <pre>
- ```txt PhishNet/ 
-├── static/ # Static files (CSS, JS, icons) 
-│ └── style.css # Custom stylesheet for phishing pages 
-├── templates/ # HTML templates rendered by Flask 
-│ ├── index.html # Fake login page (Gmail/Google) 
-│ ├── awareness.html # Cybersecurity awareness page 
-│ └── admin.html # Admin dashboard with logs/charts 
-├── logs/credentials.csv # Logged credential data (email, password, timestamp, IP) 
-├── app.py # Main Flask server handling phishing, logging, API, and dashboard 
-├── requirements.txt # Python dependencies 
-├── README.md # Project overview and instructions 
-├── .gitignore # Git ignored files 
-└── LICENSE # Open-source license file ```
+ ```txt PhishNet/
+├── static/                     # Static files (CSS, JS, icons)
+│   └── style.css              # Custom stylesheet for phishing pages
+│
+├── templates/                 # HTML templates rendered by Flask
+│   ├── index.html             # Fake login page (Gmail/Google)
+│   ├── awareness.html         # Cybersecurity awareness page
+│   └── admin.html             # Admin dashboard with logs/charts
+│
+├── credentials.csv            # Logged credential data (email, password, timestamp, IP)
+├── app.py                     # Main Flask server handling phishing, logging, API, and dashboard
+├── requirements.txt           # Python dependencies
+├── README.md                  # Project overview and instructions
+├── .gitignore                 # Git ignored files
+└── LICENSE                    # Open-source license file
+ ```
  </pre>
 
 
