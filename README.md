@@ -19,15 +19,16 @@ PhishNet is a phishing awareness and credential logging simulation project desig
    `python app.py`
 
 ## 📁 Folder Structure
-PHISHNET/
-├── logs/
-│   └── credentials.csv
-├── templates/
-│   ├── admin-login.html
-│   ├── admin.html
-│   ├── awareness.html
-│   ├── fake-login-page.html
-│   └── index.html
-└── app.py
+PhishNet/
+├── backend/
+│   ├── server.js
+│   └── model.pkl
+├── frontend/
+│   ├── src/
+│   └── public/
+├── README.md
+└── requirements.txt
+
+
 
 > ⚠️ For ethical educational use only. Do not deploy publicly without permission.
